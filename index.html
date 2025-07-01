@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pokémon Card Worth in INR</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+    .glass {
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    .glow:focus {
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4);
+      border-color: #3b82f6;
+    }
+    .loading {
+      animation: bounce 1s infinite alternate;
+    }
+    @keyframes bounce {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-5px); opacity: 0.7; }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-indigo-500 via-blue-500 to-purple-600 min-h-screen flex items-center justify-center p-6">
+
+  <div class="glass p-8 rounded-3xl shadow-2xl w-full max-w-xl text-white transition-all duration-300">
+    <h1 class="text-4xl font-bold text-center mb-6 drop-shadow">🎴 Pokémon Card Value Checker</h1>
+
+    <input 
+      id="cardInput" 
+      class="w-full p-4 rounded-xl glow bg-white/20 text-white placeholder-white/70 mb-4 border focus:outline-none transition-all duration-200"
+      placeholder="Enter Pokémon card name (e.g. Charizard)"
+    />
+
+    <button 
+      onclick="checkValue()" 
+      class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 p-3 rounded-xl text-white font-semibold text-lg shadow-md transition-all duration-300"
+    >
+      🔍 Check Worth
+    </button>
+
+    <div id="result" class="mt-6 text-xl text-center font-semibold min-h-[3rem]"></div>
+  </div>
+
+  <script>
+    async function checkValue() {
+      const cardName = document.getElementById('cardInput').value.trim();
+      const resultDiv = document.getElementById('result');
+      
+      if (!cardName) {
+        resultDiv.innerText = "⚠️ Please enter a Pokémon card name.";
+        return;
+      }
+
+      resultDiv.innerHTML = "<span class='loading text-white/80'>⏳ Checking worth...</span>";
+
+      try {
+        const cardRes = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(cardName)}`);
+        const cardData = await cardRes.json();
+
+        if (!cardData.data.length) {
+          resultDiv.innerHTML = "❌ Card not found.";
+          return;
+        }
+
+        const card = cardData.data[0];
+        const usdPrice = card.cardmarket?.prices?.averageSellPrice || 5;
+
+        const fxRes = await fetch(`https://api.frankfurter.app/latest?from=USD&to=INR`);
+        const fxData = await fxRes.json();
+        const rate = fxData.rates.INR;
+
+        const inrValue = (usdPrice * rate).toFixed(2);
+
+        resultDiv.innerHTML = `
+          ✅ <strong class="text-green-300">${card.name}</strong><br>
+          💸 Worth: <span class="text-yellow-300 font-bold">₹${inrValue}</span><br>
+          🪙 (~$${usdPrice})
+        `;
+      } catch (err) {
+        resultDiv.innerText = "⚠️ Something went wrong. Try again.";
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
