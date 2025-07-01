@@ -45,7 +45,7 @@ Check the real-time value of any Pokémon card in **INR (₹)** using this styli
 To run the app locally:
 
 ```bash
-git clone https://github.com/yourusername/pokemon-worth-checker.git
+git clone https://github.com/nilesh3372/Pok-mon-Card-Price-Fetcher.git
 cd pokemon-worth-checker
 # Open index.html in any browser
 
