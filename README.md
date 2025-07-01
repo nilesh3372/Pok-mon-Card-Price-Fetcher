@@ -25,7 +25,7 @@ Check the real-time value of any Pokémon card in **INR (₹)** using this styli
 
 ## 🚀 Live Demo
 
-> [Click to Try the App](https://your-vercel-link.vercel.app)  
+> [Click to Try the App](https://pok-mon-card-price-fetcher.vercel.app/)  
 
 ---
 
