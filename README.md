@@ -49,8 +49,8 @@ git clone https://github.com/yourusername/pokemon-worth-checker.git
 cd pokemon-worth-checker
 # Open index.html in any browser
 
----
 
+```
 ## 📜 License
 
 This project is licensed under the **MIT License** – see the [LICENSE](./LICENSE) file for details.
