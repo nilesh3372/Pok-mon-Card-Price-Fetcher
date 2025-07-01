@@ -51,11 +51,21 @@
 
   <script>
     async function checkValue() {
-      const cardName = document.getElementById('cardInput').value.trim();
+      const cardName = document.getElementById('cardInput').value.trim().toLowerCase();
       const resultDiv = document.getElementById('result');
-      
+
       if (!cardName) {
         resultDiv.innerText = "⚠️ Please enter a Pokémon card name.";
+        return;
+      }
+
+      // 🪄 Dhaasu Easter Egg
+      if (cardName === "dhaasu") {
+        resultDiv.innerHTML = `
+          🧨 <strong class="text-yellow-300 text-2xl">Dhaasu Card</strong><br>
+          💸 Worth: <span class="text-green-400 font-bold text-3xl">₹∞</span><br>
+          🔥 Legendary level detected!
+        `;
         return;
       }
 
