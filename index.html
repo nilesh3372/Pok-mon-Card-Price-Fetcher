@@ -38,6 +38,12 @@
       class="w-full p-4 rounded-xl glow bg-white/20 text-white placeholder-white/70 mb-4 border focus:outline-none transition-all duration-200"
       placeholder="Enter Pokémon card name (e.g. Charizard)"
     />
+    <input 
+      id="hpInput" 
+      type="number"
+      class="w-full p-3 rounded-xl glow bg-white/10 text-white placeholder-white/60 mb-4 border focus:outline-none transition-all duration-200"
+      placeholder="Optional: Enter card HP (e.g. 250)"
+    />
 
     <button 
       onclick="checkValue()" 
@@ -52,6 +58,7 @@
   <script>
     async function checkValue() {
       const cardName = document.getElementById('cardInput').value.trim().toLowerCase();
+      const hpInput = parseInt(document.getElementById('hpInput').value.trim());
       const resultDiv = document.getElementById('result');
 
       if (!cardName) {
@@ -59,12 +66,26 @@
         return;
       }
 
-      // 🪄 Dhaasu Easter Egg
+      // 🔒 Secret Codes
       if (cardName === "dhaasu") {
         resultDiv.innerHTML = `
           🧨 <strong class="text-yellow-300 text-2xl">Dhaasu Card</strong><br>
           💸 Worth: <span class="text-green-400 font-bold text-3xl">₹∞</span><br>
           🔥 Legendary level detected!
+        `;
+        return;
+      }
+      if (cardName === "sua") {
+        resultDiv.innerHTML = `
+          👑 <strong class="text-pink-400 text-2xl">Sua</strong><br>
+          🏆 Rank: <span class="text-green-300 font-bold">Legendarest</span>
+        `;
+        return;
+      }
+      if (cardName === "mohit") {
+        resultDiv.innerHTML = `
+          😹 <strong class="text-red-400 text-2xl">Mohit</strong><br>
+          🧻 Rank: <span class="text-yellow-200 font-bold">Noob Detected</span>
         `;
         return;
       }
@@ -83,16 +104,25 @@
         const card = cardData.data[0];
         const usdPrice = card.cardmarket?.prices?.averageSellPrice || 5;
 
-        const fxRes = await fetch(`https://api.frankfurter.app/latest?from=USD&to=INR`);
+        const fxRes = await fetch("https://api.frankfurter.app/latest?from=USD&to=INR");
         const fxData = await fxRes.json();
         const rate = fxData.rates.INR;
 
-        const inrValue = (usdPrice * rate).toFixed(2);
+        let finalPrice = usdPrice;
+
+        // 💪 Slight HP bonus
+        if (!isNaN(hpInput)) {
+          if (hpInput >= 200) finalPrice *= 1.2;
+          else if (hpInput >= 100) finalPrice *= 1.1;
+          else if (hpInput < 50) finalPrice *= 0.9;
+        }
+
+        const inrValue = (finalPrice * rate).toFixed(2);
 
         resultDiv.innerHTML = `
           ✅ <strong class="text-green-300">${card.name}</strong><br>
           💸 Worth: <span class="text-yellow-300 font-bold">₹${inrValue}</span><br>
-          🪙 (~$${usdPrice})
+          🪙 (~$${finalPrice.toFixed(2)}) ${hpInput ? `<br>💪 HP Bonus Applied: ${hpInput}` : ''}
         `;
       } catch (err) {
         resultDiv.innerText = "⚠️ Something went wrong. Try again.";
